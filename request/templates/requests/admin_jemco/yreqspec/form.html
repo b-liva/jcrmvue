@@ -1,0 +1,138 @@
+{% extends 'requests/admin_jemco/page_elements/base_html/admin_base.html' %}
+{% load jformat %}
+{% block right_col %}
+    <div class="row">
+        <div class="container">
+            <div class="col-md-6 col-md-offset-3">
+                <div>
+                    <h3>{{ msg }}</h3>
+                    <h1 style="text-align: center; background-color: #3E5367; border: 1px solid burlywood; color: whitesmoke;">
+                        Request Specs</h1>
+                    <div>
+                        <p><b>Request:</b></p>
+                        <p>
+                            <span>id: {{ req_obj.pk }}</span>
+                            <span>- #: {{ req_obj.number }}</span>
+                            <span>- Date: {{ req_obj.pub_date|jformat }}</span>
+                        </p>
+                        <hr>
+                    </div>
+                    <div>
+                        <p><b>Spec:</b></p>
+                        <table class="withBorder">
+                            <tbody>
+                            <tr>
+                                <th>ID</th>
+                                <th>Type</th>
+                                <th>QTY</th>
+                                <th>KW</th>
+                                <th>VOLTAGE</th>
+                                <th>RPM</th>
+                                <th>IP</th>
+                                <th>IC</th>
+                                <th>SUMMARY</th>
+                                {#                        <th>PRICE</th>#}
+                                <th>ACTION</th>
+                            </tr>
+                            {% for spec in specs %}
+                                <tr>
+                                    <td>{{ spec.id }}</td>
+                                    <td>{{ spec.type }}</td>
+                                    <td>{{ spec.qty }}</td>
+                                    <td>{{ spec.kw }}</td>
+                                    <td>{{ spec.voltage }}</td>
+                                    <td>{{ spec.rpm }}</td>
+                                    <td>{{ spec.ip }}</td>
+                                    <td>{{ spec.ic }}</td>
+                                    <td>{{ spec.summary }}</td>
+                                    {#                        <td>{{ spec.price }}</td>#}
+                                    <td>
+                                        <a href="{% url 'reqSpec_delete' yreqSpec_pk=spec.pk req_pk=req_obj.pk %}">
+                                            <button class="btn btn-primary btn-xs">Delete</button>
+                                        </a>
+                                        <a href="{% url 'reqSpec_edit' yreqSpec_pk=spec.pk req_pk=req_obj.pk %}">
+                                            <button class="btn btn-primary btn-xs">Edit</button>
+                                        </a>
+
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        <hr>
+                    </div>
+                    {% if msg %}
+                        {{ msg }}
+                    {% endif %}
+                    <form method="POST" action="{% url 'reqSpec_insert' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group col-md-6">
+                            Type<br>
+                            <select name="type" class="form-control">
+                                <option value="Routine">Routine</option>
+                                <option value="Project">Project</option>
+                                <option value="Services">Services</option>
+                                <option value="Tender">Tender</option>
+                            </select>
+                            <br>QTY<br>
+                            <input type="number" name="qty" value="{{ spec.qty }}" class="form-control form"><br>
+                            KW<br>
+                            <input type="number" name="kw" value="{{ spec.kw }}" class="form-control">
+
+
+                            <br> RPM<br>
+                            <input type="number" name="rpm" value="{{ spec.rpm }}" class="form-control">
+                            <br>
+
+                        </div>
+                        <div class="form-group col-md-6">
+                            Voltage<br>
+                            <select name="voltage" class="form-control">
+                                <option value="380">380</option>
+                                <option value="400">400</option>
+                                <option value="3000">3000</option>
+                                <option value="3300">3300</option>
+                                <option value="6000">6000</option>
+                                <option value="6600">6600</option>
+                                <option value="11000">11000</option>
+                            </select><br>
+                            IP<br>
+                            <select name="ip" class="form-control">
+                                <option value="55">55</option>
+                                <option value="56">56</option>
+                            </select><br>
+                            IC<br>
+                            <select name="ic" class="form-control">
+                                <option value="411">411</option>
+                                <option value="511">511</option>
+                                <option value="611">611</option>
+                            </select><br>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <textarea name="summary" class="form-control" rows="5" placeholder="Enter summary here...">{{ spec.summary }}</textarea>
+                            <br>
+                            {#                Price<br>#}
+                            {#                <input name="price" type="text">#}
+                            <br>
+                            <input type="hidden" name="req_id" value="{{ req_obj.pk }}" class="form-control"><br>
+                            <input type="hidden" name="updating" value="{{ updating }}" class="form-control"><br>
+                            <input type="hidden" name="spec_pk" value="{{ spec.pk }}" class="form-control"><br>
+{#                            <input class="btn btn-primary" type="submit" value="save and add another" name="done">#}
+                            <button class="btn btn-primary" type="submit">Save and add antoher</button>
+{#                            <a class="btn btn-success" href="{% url 'request_index' %}">Back to Index</a>#}
+                            <a class="btn btn-success" href="{% url 'req_search' %}">Back to Index</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+
+
+
+
+
+

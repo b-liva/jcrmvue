@@ -1,0 +1,53 @@
+{% extends 'requests/admin_jemco/page_elements/base_html/admin_base.html' %}
+{% block right_col %}
+    <div class="container">
+        <div class="col-md-6 col-md-offset-3">
+            <h3>{{ msg }}</h3>
+            <h1 style="text-align: center; background-color: #3E5367; border: 1px solid burlywood; color: whitesmoke;">
+                Add new Payment</h1>
+
+            <hr>
+            <b>Request No | ID:</b><br>
+            {% for req_single in reqs %}
+                {{ req_single.number }} | {{ req_single.id }} -
+            {% endfor %}
+
+            <hr>
+            <b>xprefs No | ID:</b><br>
+            {% for xpref_single in xprefs %}
+                {{ xpref_single.number }} | {{ xpref_single.id }} -
+            {% endfor %}
+
+            <hr>
+            <b>xpayment | ID:</b><br>
+            {% for xpayment_single in xpayments %}
+                {{ xpayment_single.number }} | {{ xpayment_single.id }} -
+            {% endfor %}
+            <br>
+            <hr>
+            <b>Add payment here.</b><br>
+            <form method="POST" action="{% url 'payment_insert' %}">
+                {% csrf_token %}
+                <br>enter prefactor number<br>
+                <input type="number" name="xpref_no">
+                <br>enter payment no.<br>
+                <input type="number" name="number">
+                <br>enter payment amount<br>
+                <input type="number" name="amount">
+                <br>
+                <div class="form-group">
+                    <label for="date_fa">Date</label>
+                    <input name="date_fa" id="date_fa"><br>
+                </div>
+
+                Summary<br>
+                <textarea name="summary" rows="3" cols="20"></textarea><br>
+                <button type="submit" name="submit" class="btn btn-success btn-sm">Save Payment</button>
+                <a class="btn btn-danger btn-sm" href="{% url 'payment_index' %}">Cancel</a>
+
+            </form>
+        </div>
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,24 @@
+{% load auth_extras %}
+<!-- sidebar menu -->
+<div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+    <div class="menu_section">
+        <ul class="nav side-menu">
+            <li><a><i class="fa fa-home"></i> داشبورد <span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+                    <li><a href="{% url 'dashboard' %}">داشبورد</a></li>
+                </ul>
+            </li>
+            {% if request.user|has_group:"customer" %}
+                <li><a><i class="fa fa-home"></i> مدیریت درخواست ها <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+
+                        <li><a href="{% url 'fbv_customer_request_create' %}">افزودن درخواست جدید</a></li>
+                        <li><a href="{% url 'dashboard' %}">درخواست ها</a></li>
+                    </ul>
+                </li>
+            {% endif %}
+            <hr>
+        </ul>
+    </div>
+</div>
+<!-- /sidebar menu -->
