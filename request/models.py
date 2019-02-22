@@ -2,8 +2,17 @@ import os.path
 from os.path import split
 
 # from django.contrib.auth.models import User
+from django.urls import reverse
+
 from accounts.models import User
 from django.db import models
+from django.db.models import (
+    Sum,
+    Avg,
+    Count,
+    Variance,
+    F, Q,
+    FloatField)
 import datetime
 from django.utils.timezone import now
 from customer.models import Customer
@@ -70,8 +79,20 @@ class Requests(models.Model):
             ('sale_expert', 'can edit own stuff'),
         )
 
+    def total_kw(self):
+        kw = self.reqspec_set.filter(is_active=True).aggregate(
+            total_kw=Sum(F('kw') * F('qty'), output_field=FloatField())
+        )
+        return kw['total_kw']
+
     def pub_date_pretty(self):
         return self.pub_date.strftime('%b %e %Y')
+
+    def persian_date(self):
+        return self.date_fa.strftime('%b %e %Y')
+
+    def get_absolute_url(self):
+        return reverse('request_details', args=[self.pk])
 
 
 class RequestFiles(models.Model):
@@ -133,6 +154,9 @@ class Xpref(models.Model):
     verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
+    def get_absolute_url(self):
+        return reverse('pref_details', args=[self.pk])
+
     def pub_date_pretty(self):
         return self.pub_date.strftime('%b %e %Y')
 
@@ -144,6 +168,19 @@ class Xpref(models.Model):
             ('index_proforma', 'Can index Proforma'),
             ('read_proforma', 'Can read Proforma'),
         )
+
+    def proforma_sum(self, *args, **kwargs):
+        """
+        probably kwarg will be used to filter furthur such as proforma sum between dates.
+        the dates is passed from graphql
+        :param args:
+        :param kwargs:
+        :return: sum of a proforma for a specific customer
+        """
+        prof = self.prefspec_set.filter(is_active=True).aggregate(
+            sum=Sum(F('price') * F('qty') * 1.09, output_field=FloatField())
+        )
+        return prof['sum']
 
 
 class ProfFiles(models.Model):
@@ -247,4 +284,3 @@ class Payment(models.Model):
 class PaymentFiles(models.Model):
     image = models.FileField(upload_to=upload_location, null=True, blank=True)
     pay = models.ForeignKey(Payment, on_delete=models.CASCADE)
-

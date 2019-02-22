@@ -12,6 +12,10 @@ from django_jalali.db import models as jmodels
 
 
 class RequestType(DjangoObjectType):
+    total_kw = graphene.Float(source='total_kw')
+    pub_date_pretty = graphene.String(source='pub_date_pretty')
+    persian_date = graphene.String(source='persian_date')
+    url = graphene.String(source='get_absolute_url')
 
     class Meta:
         model = Requests
@@ -24,6 +28,8 @@ class RequestType(DjangoObjectType):
 
 
 class ProformaType(DjangoObjectType):
+    proforma_sum = graphene.Float(source='proforma_sum')
+    url = graphene.String(source='get_absolute_url')
 
     class Meta:
         model = Xpref

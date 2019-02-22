@@ -5,7 +5,10 @@ from graphene_django.types import DjangoObjectType
 
 from customer.models import Customer
 
+
 class CustomerType(DjangoObjectType):
+    order_count = graphene.Int(source='customer_order_count')
+    customer_payment_amount = graphene.Float(source='customer_payment_amount')
 
     class Meta:
         model = Customer
@@ -18,10 +21,10 @@ class CustomerType(DjangoObjectType):
 
 class Query(graphene.ObjectType):
     customer = graphene.Field(CustomerType,
-                          id=graphene.ID(),
-                          name=graphene.String(),
-                          code=graphene.Int(),
-                          )
+                              id=graphene.ID(),
+                              name=graphene.String(),
+                              code=graphene.Int(),
+                              )
     customers = DjangoFilterConnectionField(CustomerType)
 
     def resolve_customers(self, info):
@@ -34,6 +37,7 @@ class Query(graphene.ObjectType):
     def resolve_customer(self, info, **kwargs):
         id = kwargs.get('id')
         name = kwargs.get('name')
+        print('customer found')
 
         if id is not None:
             customer = Customer.objects.get(pk=id)
@@ -43,8 +47,11 @@ class Query(graphene.ObjectType):
             #     return None
             return customer
         if name is not None:
-            return Customer.objects.get(name=name)
+            customer = Customer.objects.get(name=name)
+
+            return customer
         return None
+
 
 schema = graphene.Schema(query=Query)
 

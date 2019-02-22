@@ -1,12 +1,17 @@
 # from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import (
+    Sum,
+    Avg,
+    Variance,
+    Count
+)
 from django.urls import reverse
 from django.utils.timezone import now
 from django_jalali.db import models as jmodels
 # from django.contrib.auth.models import User
 from accounts.models import User, CustomerUser
-
 
 from django import forms
 
@@ -30,8 +35,11 @@ def default_customer_code():
 
 class Type(models.Model):
     name = models.CharField(max_length=20)
+
     def __str__(self):
         return '%s' % self.name
+
+
 # types = Type.objects.all()
 
 
@@ -64,6 +72,14 @@ class Customer(models.Model):
     def get_absolute_url(self):
         return reverse('customer_read', args=[self.pk])
 
+    def customer_order_count(self):
+        # return Customer.objects.get(pk=self.pk).requests_set.count()
+        return self.requests_set.filter(is_active=True).count()
+
+    def customer_payment_amount(self):
+        payment_amount = self.payment_set.filter(is_active=True).aggregate(Sum('amount'))
+        return payment_amount['amount__sum']
+
 
 class Address(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
@@ -76,4 +92,3 @@ class Address(models.Model):
 class Phone(models.Model):
     add = models.ForeignKey(Address, on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=15)
-
