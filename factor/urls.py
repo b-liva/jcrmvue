@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from graphene_django.views import GraphQLView
 
@@ -31,9 +32,9 @@ urlpatterns = [
                        name='account_change_password'),
                   path('accounts/', include('allauth.urls')),
                   # path('', prefactor.views.home, name='homepage'),
-                  # path('', request.views.dashboard, name='dashboard'),
-                  path("", TemplateView.as_view(template_name="application.html"), name="app",),
-                  path('graphql', GraphQLView.as_view(graphiql=True)),
+                  path('', request.views.dashboard, name='dashboard'),
+                  path("vue", TemplateView.as_view(template_name="application.html"), name="app",),
+                  path('graphql', csrf_exempt(GraphQLView.as_view(graphiql=True))),
                   path('dashboard2', request.views.dashboard2, name='dashboard'),
                   path('sales-dash', request.views.sales_expert_dashboard, name='dashboard'),
                   path('kwjs/', request.views.kwjs, name='kwjs'),

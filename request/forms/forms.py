@@ -69,6 +69,17 @@ class RequestFrom(forms.ModelForm):
         }
 
 
+class RequestFormGraphql(RequestFrom):
+
+    class Meta(RequestFrom.Meta):
+
+        exclude = ('owner', 'pub_date', 'added_by_customer', 'parent_number',
+                   'edited_by_customer', 'is_active', 'temp_number', 'finished', 'date_finished')
+
+        widgets = RequestFrom.Meta.widgets
+        widgets['customer'] = forms.TextInput()
+
+
 class RequestFileForm(forms.ModelForm):
 
     class Meta:

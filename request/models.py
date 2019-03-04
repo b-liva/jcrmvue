@@ -94,6 +94,10 @@ class Requests(models.Model):
     def get_absolute_url(self):
         return reverse('request_details', args=[self.pk])
 
+    def orders_count(self):
+        orders_count = Requests.objects.filter(is_active=True).aggregate(count=models.Count('id'))
+        return orders_count['count']
+
 
 class RequestFiles(models.Model):
     image = models.FileField(upload_to=upload_location, null=True, blank=True)
@@ -203,6 +207,11 @@ class PrefSpec(models.Model):
     considerations = models.TextField(max_length=500, blank=True, null=True)
     is_active = models.BooleanField(default=True)
 
+    class Meta:
+        permissions = (
+            ('index_prefspecs', 'can see list of prefspecs'),
+        )
+
     def __str__(self):
         return 'pk:%s | %s | %sKW - %sRPM - %sV' % (self.pk, self.qty, self.kw, self.rpm, self.voltage)
 
@@ -284,3 +293,4 @@ class Payment(models.Model):
 class PaymentFiles(models.Model):
     image = models.FileField(upload_to=upload_location, null=True, blank=True)
     pay = models.ForeignKey(Payment, on_delete=models.CASCADE)
+

@@ -1,0 +1,51 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="fontiran.com:license" content="Y68A9">
+    <link rel="icon" href="{% static 'request/rtl/build/img/icons/favicon.png' %}" type="image/ico"/>
+    <title>شرکت جمکو</title>
+    {% include 'admin_theme/page_elements/styles.html' %}
+
+</head>
+
+<body class="nav-md">
+<div class="container body">
+    <div class="main_container">
+        <!-- page content -->
+
+        <div class="right_col" role="main">
+
+            {% block right_col %}
+
+            {% endblock %}
+
+
+        </div>
+        <!-- /page content -->
+
+        <!-- footer content -->
+        <footer>
+            <div class="pull-right">
+{#                Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>#}
+            </div>
+            <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+    </div>
+</div>
+
+<!-- jQuery -->
+<script src="{% static 'request/admin_jemco/js/jquery.min.js' %}"></script>
+<!-- Bootstrap -->
+<script src="{% static 'request/admin_jemco/js/bootstrap.min.js' %}"></script>
+
+
+</body>
+</html>

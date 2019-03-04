@@ -3,57 +3,50 @@ import graphene
 from graphene_django.filter import DjangoFilterConnectionField
 from graphene_django.types import DjangoObjectType
 
-from customer.models import Customer
+from accounts.models import User
 
 
-class CustomerNode(DjangoObjectType):
-    order_count = graphene.Int(source='customer_order_count')
-    customer_payment_amount = graphene.Float(source='customer_payment_amount')
+class UserType(DjangoObjectType):
 
     class Meta:
-        model = Customer
+        model = User
         interfaces = (graphene.Node,)
 
         filter_fields = {
-            'name': ['exact', 'icontains', 'istartswith'],
+            'username': ['exact', 'icontains', 'istartswith'],
+            'last_name': ['exact', 'icontains', 'istartswith'],
+            'sales_exp': ['exact'],
+            'is_customer': ['exact'],
         }
-
-    @classmethod
-    def get_node(cls, info, id):
-        print(f"info is : {info}")
-        print(f"customer id is: {id}")
-        try:
-            return Customer.objects.get(pk=id)
-        except Customer.DoesNotExist:
-            return None
 
 
 class Query(graphene.ObjectType):
-
-    customerNode = graphene.Node.Field(CustomerNode)
-    customer = graphene.Field(CustomerNode,
+    user = graphene.Field(UserType,
                               id=graphene.ID(),
-                              name=graphene.String(),
-                              code=graphene.Int(),
+                              username=graphene.String(),
+                              last_name=graphene.String(),
                               )
-    customers = DjangoFilterConnectionField(CustomerNode)
+    users = DjangoFilterConnectionField(UserType)
 
-    def resolve_customer(self, info, **kwargs):
+    def resolve_user(self, info, **kwargs):
         id = kwargs.get('id')
         name = kwargs.get('name')
-        print('customer found')
+        last_name = kwargs.get('last_name')
 
         if id is not None:
-            customer = Customer.objects.get(pk=id)
+            user = User.objects.get(pk=id)
             # can_see = has_perm_or_is_owner(info.context.user, 'task.add_task', task)
             # if not can_see:
             #     raise Exception('nothing to show.')
             #     return None
-            return customer
+            return user
         if name is not None:
-            customer = Customer.objects.get(name=name)
+            user = User.objects.get(name=name)
 
-            return customer
+            return user
+        if last_name is not None:
+            user = User.objects.get(last_name=last_name)
+            return user
         return None
 
 

@@ -23,3 +23,21 @@ class ProfEditForm(forms.ModelForm):
         fields = '__all__'
         exclude = ('req_id', 'owner', 'pub_date')
         widgets = {"image": forms.FileInput(attrs={'multiple': True})}
+
+
+class ProformaForm(forms.ModelForm):
+
+    class Meta:
+        model = models.Xpref
+        fields = '__all__'
+        exclude = ('owner', 'pub_date')
+        # widgets = {"image": forms.FileInput(attrs={'multiple': True})}
+
+
+class ProformaPriceForm(forms.ModelForm):
+
+    class Meta:
+        model = models.PrefSpec
+        fields = '__all__'
+        # exclude = ('owner', 'pub_date')
+        # widgets = {"image": forms.FileInput(attrs={'multiple': True})}
