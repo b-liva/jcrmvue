@@ -123,6 +123,15 @@ class SpecForm(forms.ModelForm):
         }
 
 
+class SpecFormGraphql(SpecForm):
+
+    class Meta(SpecForm.Meta):
+        exclude = ('owner', 'is_active')
+
+        widgets = RequestFrom.Meta.widgets
+        widgets['req_id'] = forms.TextInput()
+
+
 class SpecAddForm(SpecForm):
     
     class Meta(SpecForm.Meta):

@@ -27,18 +27,14 @@
         </ApolloQuery>
         <v-container>
             <v-layout>
-                <v-flex v-if="showForm" xs12 md6>
-                        <req-add-form></req-add-form>
-                </v-flex>
-                <v-flex v-if="!showForm" xs12 md6>
-                        <req-spec-add-form></req-spec-add-form>
-                </v-flex>
-                <v-flex v-if="!showForm" xs12 md6>
-                        <spec-list></spec-list>
+                <v-flex xs12 md12>
+                    <keep-alive>
+                        <component :is="comp"></component>
+                    </keep-alive>
                 </v-flex>
             </v-layout>
         </v-container>
-        <v-btn @click="showForm = !showForm">toggle</v-btn>
+        <v-btn @click="showForm">toggle</v-btn>
     </div>
 </template>
 <script>
@@ -58,11 +54,15 @@
         data: () => ({
             summary: GET_SUMMARY,
             visible: true,
-            showForm: true,
+            comp: "req-add-form",
             loading: false,
             sales_exp: "",
         }),
-        methods: {},
+        methods: {
+            showForm() {
+                this.comp = this.comp === 'req-add-form' ? 'req-spec-add-form' : 'req-add-form';
+            }
+        },
         watch: {},
 
         apollo: {}

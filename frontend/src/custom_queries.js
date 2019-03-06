@@ -40,6 +40,7 @@ export const LIST_CUSTOMERS = gql`
   }
 }
 `;
+
 export const FIND_CUSTOMER_BY_NAME = gql`
   query($name: String){
   customers(name_Icontains: $name) {
@@ -53,6 +54,7 @@ export const FIND_CUSTOMER_BY_NAME = gql`
   }
 }
 `;
+
 export const GET_SUMMARY = gql`
   query 
   topSum{
@@ -64,24 +66,6 @@ export const GET_SUMMARY = gql`
 }
 `;
 
-export const CREATE_SPEC = gql`
-  mutation{
-  createSpec(input: {
-    qty: 5,
-    type: 1,
-    kw: 131,
-    rpm: 3000,
-    voltage:380,
-    tech:true,
-    price:false,
-    permission:false,
-    sent:false,
-    cancelled:false,
-  }) {
-    clientMutationId
-  }
-}
-`;
 export const CREATE_PROFORMA = gql`
   mutation{
   createProforma(input: {
@@ -97,6 +81,7 @@ export const CREATE_PROFORMA = gql`
   }
 }
 `;
+
 export const GET_ORDER = gql`
 query($nodeId: ID!){
   node(id: $nodeId) {
@@ -110,6 +95,7 @@ query($nodeId: ID!){
   }
 }
 `;
+
 export const CREATE_PAYMENT = gql`
   mutation{
   createPayment(input: {
@@ -126,7 +112,7 @@ export const CREATE_PAYMENT = gql`
 `;
 
 export const CREATE_REQUEST = gql`
-  mutation ($number: Int!, $date: String!, $customer:ID!, $summary: String) {
+  mutation AddReq($number: Int!, $date: String!, $customer:ID!, $summary: String) {
     createRequest(
       input: {
         customer:$customer,
@@ -135,7 +121,62 @@ export const CREATE_REQUEST = gql`
         summary:$summary
       }
     ) {
-    clientMutationId
+     requests {
+      id
+    }
     }
   }
+`;
+export const CREATE_SPEC = gql`
+   mutation (
+  $reqId:ID!,
+  $qty: Int!, 
+  $type: ID!, 
+  $kw:Float!, 
+  $rpm: Int!,
+  $voltage:Int!,
+  $tech: Boolean!,
+  $price: Boolean!,
+  $permission: Boolean!,
+  $sent: Boolean!,
+  $cancelled: Boolean!
+) {
+    createSpec(
+      input: {
+        reqId:$reqId,
+        qty:$qty,
+        type:$type,
+        kw:$kw,
+        rpm:$rpm,
+        voltage:$voltage,
+        permission:$permission,
+        tech: $tech,
+        sent:$sent,
+        price:$price,
+        cancelled:$cancelled
+      }
+    ) {
+    reqSpec {
+      id
+    }
+    }
+  }
+`;
+
+export const GET_SPEC_SET = gql`
+query ($id: ID!){
+  specs: order(id:$id) {
+    id
+    reqspecSet {
+      edges {
+        node {
+          kw
+          rpm
+          voltage
+          tech
+        }
+      }
+    }
+  }
+}
 `;

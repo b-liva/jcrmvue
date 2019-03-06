@@ -3,7 +3,7 @@ from graphene_django.forms.mutation import DjangoModelFormMutation
 from accounts.models import User
 from customer.models import Customer
 from customer.schema import CustomerNode
-from request.forms.forms import RequestFrom, SpecForm, RequestFormGraphql
+from request.forms.forms import RequestFrom, SpecForm, RequestFormGraphql, SpecFormGraphql
 from request.forms.payment_forms import PaymentFrom
 from request.forms.proforma_forms import ProformaForm, ProformaPriceForm
 from request.models import Requests, ReqSpec, Xpref, PrefSpec, Payment
@@ -28,6 +28,8 @@ class RequestMutation(DjangoModelFormMutation):
             req = Requests.objects.get(pk=req_id)
             form = RequestFormGraphql(input or None, instance=req)
             form.save()
+            output = Requests.objects.get(pk=req_id)
+
         else:
             form = RequestFormGraphql(input or None)
             if form.is_valid():
@@ -36,31 +38,44 @@ class RequestMutation(DjangoModelFormMutation):
                 req_item.customer = customerObj
                 req_item.save()
                 form.save_m2m()
+                output = Requests.objects.get(pk=req_item.pk)
             else:
                 print(form.errors)
                 form = RequestFormGraphql
+                output = form
 
-        return RequestMutation(form)
+        return RequestMutation(output)
 
 
 class SpecMutation(DjangoModelFormMutation):
     class Meta:
-        form_class = SpecForm
+        form_class = SpecFormGraphql
 
     def mutate_and_get_payload(cls, root, **input):
-        owner = User.objects.get(pk=1)
-        req_pk = 10
-        req = Requests.objects.filter(is_active=True).get(pk=req_pk)
-        print(input)
-        form = SpecForm(input)
-        if form.is_valid():
-            spec = form.save(commit=False)
-            spec.req_id = req
-            spec.owner = owner
-            spec.save()
+        owner = User.objects.get(pk=root.context.user.pk)
+        reqId = from_global_id(input['req_id'])
+        req = Requests.objects.filter(is_active=True).get(pk=reqId[1])
+        input['req_id'] = reqId[1]
+        if "id" in input:
+            spec_id = input['id']
+            spec = ReqSpec.objects.get(pk=spec_id)
+            form = SpecFormGraphql(input or None, instance=spec)
+            form.save()
+            # output = Requests.objects.get(pk=spec_id)
+            output = spec
         else:
-            print(form.errors)
-        return SpecMutation(form)
+            form = SpecFormGraphql(input or None)
+            if form.is_valid():
+                spec = form.save(commit=False)
+                spec.req_id = req
+                spec.owner = owner
+                spec.save()
+                output = ReqSpec.objects.get(pk=spec.pk)
+            else:
+                print(form.errors)
+                output = False
+
+        return SpecMutation(output)
 
 
 class ProformaMutation(DjangoModelFormMutation):
